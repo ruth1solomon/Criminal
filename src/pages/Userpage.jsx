@@ -1,9 +1,13 @@
+import Navbar from "../components/header/Navbar"
 
-import React from 'react'
+
 
 const Userpage = () => {
   return (
-    <div>hello there user</div>
+    <div>
+      <Navbar />
+      <h1>hello there user</h1>
+    </div>
   )
 }
 

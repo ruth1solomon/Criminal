@@ -8,10 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "main":"main.jsx",
-    "homepage":"./"
-
-    
+    "main": "main.jsx",
+    "homepage": "./"
   },
   "dependencies": {
     "react": "^18.3.1",
