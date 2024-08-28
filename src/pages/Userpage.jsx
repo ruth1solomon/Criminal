@@ -2,13 +2,14 @@ import Navbar from "../components/header/Navbar"
 
 
 
-const Userpage = () => {
+const UserPage = () => {
   return (
-    <div>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <Navbar />
-      <h1>hello there user</h1>
-    </div>
-  )
-}
 
-export default Userpage
+      <h1 className="text-3xl font-bold">Welcome to the User Page</h1>
+    </div>
+  );
+};
+
+export default UserPage;

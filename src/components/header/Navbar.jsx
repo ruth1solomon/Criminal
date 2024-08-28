@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import Card from './Card';
 
-const Navbar = () => {
+// eslint-disable-next-line react/prop-types
+const Navbar = ({ isAuthenticated }) => {
   return (
     <nav className="bg-gray-800 p-4">
       <div className="container mx-auto flex justify-between items-center">
@@ -18,20 +19,23 @@ const Navbar = () => {
             <Link className="px-2 text-white no-underline" to="/">Home page</Link>
           </li>
           <li className='inline-block px-5 list-none'>
-            <Link className="px-2 text-white no-underline" to="/About">About</Link>
+            <Link className="px-2 text-white no-underline" to="/about">About</Link>
           </li>
           <li className='inline-block px-5 list-none'>
-            <Link className="px-2 text-white no-underline" to="/Contact">Contact</Link>
+            <Link className="px-2 text-white no-underline" to="/contact">Contact</Link>
           </li>
           <li className='inline-block px-5 list-none'>
-            <Link className="px-2 text-white no-underline" to="/Registerpage">Register here</Link>
+            <Link className="px-2 text-white no-underline" to="/register">Register here</Link>
           </li>
-          <li className='inline-block px-5 list-none'>
-            <Link className="px-2 text-white no-underline" to="/Userpage">userpage</Link>
-          </li>
+
           <li>
-            <Link className="px-2 text-white no-underline" to="/Login">Login</Link>
+            <Link className="px-2 text-white no-underline" to="/login">Login</Link>
           </li>
+          {isAuthenticated && (
+            <li>
+              <Link to="/user" className="text-white">Userpage</Link>
+            </li>
+          )}
         </ul>
       </div>
     </nav>
