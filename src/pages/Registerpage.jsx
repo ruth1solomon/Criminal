@@ -1,29 +1,37 @@
-import Navbar from '../components/header/Navbar'
+import Navbar from '../components/header/Navbar';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Modal from 'react-modal';
 
-// eslint-disable-next-line react/prop-types
 const RegisterPage = () => {
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [setIsAuthenticated] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    businessLicense: null, // For file upload
   });
 
   const [errors, setErrors] = useState({
     passwordError: '',
-    confirmPasswordError: ''
+    confirmPasswordError: '',
   });
 
-  const navigate = useNavigate(); // useNavigate instead of useHistory
+  const [otp, setOtp] = useState('');
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: files ? files[0] : value,
+    });
   };
 
   const validatePasswords = () => {
@@ -43,13 +51,51 @@ const RegisterPage = () => {
     return !passwordError && !confirmPasswordError;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+
     e.preventDefault();
     if (validatePasswords()) {
-      setIsAuthenticated(true)
-      console.log('User registered:', formData);
+      try {
 
-      navigate('/user'); // Redirect to user page after successful registration
+        // Prepare form data for server
+        const data = new FormData();
+        console.log(`Submitted data:` + formData.email)
+        Object.keys(formData).forEach((key) => {
+          data.append(key, formData[key]);
+        });
+
+        // Send registration request to the server
+        const response = await axios.post(`http://localhost:5000/api/auth/register`, data);
+
+        // Assuming the server responds with a status indicating OTP sent
+        if (response.status === 200) {
+          setIsOtpModalOpen(true);
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+      }
+    }
+  };
+
+  const handleOtpChange = async (e) => {
+    const value = e.target.value;
+    setOtp(value);
+
+    if (value.length === 6) {
+      try {
+        // Send OTP verification request to the server
+        const response = await axios.post('/api/verify-otp', { email: formData.email, otp: value });
+
+        if (response.status === 200) {
+          setIsAuthenticated(true);
+          setIsOtpModalOpen(false);
+          navigate('/user');
+        } else {
+          console.error('OTP verification failed');
+        }
+      } catch (error) {
+        console.error('OTP verification error:', error);
+      }
     }
   };
 
@@ -59,6 +105,7 @@ const RegisterPage = () => {
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
           <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
+
           <div className="mb-4">
             <label htmlFor="firstName" className="block text-gray-700 font-bold mb-2">First Name</label>
             <input
@@ -120,7 +167,7 @@ const RegisterPage = () => {
             />
             {errors.passwordError && <p className="text-red-500 text-sm mt-2">{errors.passwordError}</p>}
           </div>
-          <div className="mb-6">
+          <div className="mb-4">
             <label htmlFor="confirmPassword" className="block text-gray-700 font-bold mb-2">Confirm Password</label>
             <input
               type="password"
@@ -133,6 +180,18 @@ const RegisterPage = () => {
             />
             {errors.confirmPasswordError && <p className="text-red-500 text-sm mt-2">{errors.confirmPasswordError}</p>}
           </div>
+
+          <div className="mb-6">
+            <label htmlFor="businessLicense" className="block text-gray-700 font-bold mb-2">Business License</label>
+            <input
+              type="file"
+              id="businessLicense"
+              name="businessLicense"
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
           <button
             type="submit"
             className="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
@@ -144,6 +203,24 @@ const RegisterPage = () => {
           </div>
         </form>
       </div>
+
+      <Modal
+        isOpen={isOtpModalOpen}
+        onRequestClose={() => setIsOtpModalOpen(false)}
+        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mx-auto mt-20"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+      >
+        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Enter OTP</h2>
+        <p className="text-gray-700 mb-6 text-center">Please enter the 6-digit code sent to your email.</p>
+        <input
+          type="text"
+          value={otp}
+          onChange={handleOtpChange}
+          maxLength={6}
+          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
+          placeholder="Enter OTP"
+        />
+      </Modal>
     </>
   );
 };

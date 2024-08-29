@@ -1,47 +1,70 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import Card from './Card';
 
 // eslint-disable-next-line react/prop-types
 const Navbar = ({ isAuthenticated }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <nav className="bg-gray-800 p-4">
       <div className="container mx-auto flex justify-between items-center">
-
-
         <div className="flex items-center">
           <Card />
-          <span className="text-white text-2xl font-bold absolute left-1/3 transform -translate-x-1/2">
-            Criminal Record
-          </span>
+          <span className="text-white text-2xl font-bold ml-4">Criminal Record</span>
         </div>
-        <ul className="flex space-x-4">
-          <li>
-            <Link className="px-2 text-white no-underline" to="/">Home page</Link>
-          </li>
-          <li className='inline-block px-5 list-none'>
-            <Link className="px-2 text-white no-underline" to="/about">About</Link>
-          </li>
-          <li className='inline-block px-5 list-none'>
-            <Link className="px-2 text-white no-underline" to="/contact">Contact</Link>
-          </li>
-          <li className='inline-block px-5 list-none'>
-            <Link className="px-2 text-white no-underline" to="/register">Register here</Link>
-          </li>
 
+        <div className="block lg:hidden">
+          <button
+            onClick={toggleMenu}
+            className="text-white focus:outline-none"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16m-7 6h7"
+              ></path>
+            </svg>
+          </button>
+        </div>
+
+        <ul className={`lg:flex items-center space-x-4 ${isOpen ? 'block' : 'hidden'} lg:block`}>
           <li>
-            <Link className="px-2 text-white no-underline" to="/login">Login</Link>
+            <Link className="block lg:inline-block px-2 py-1 text-white no-underline" to="/">Home page</Link>
+          </li>
+          <li>
+            <Link className="block lg:inline-block px-2 py-1 text-white no-underline" to="/about">About</Link>
+          </li>
+          <li>
+            <Link className="block lg:inline-block px-2 py-1 text-white no-underline" to="/contact">Contact</Link>
+          </li>
+          <li>
+            <Link className="block lg:inline-block px-2 py-1 text-white no-underline" to="/register">Register here</Link>
+          </li>
+          <li>
+            <Link className="block lg:inline-block px-2 py-1 text-white no-underline" to="/login">Login</Link>
           </li>
           {isAuthenticated && (
             <li>
-              <Link to="/user" className="text-white">Userpage</Link>
+              <Link to="/user" className="block lg:inline-block px-2 py-1 text-white no-underline">User Page</Link>
             </li>
           )}
         </ul>
       </div>
     </nav>
-
   );
 };
 
-export default Navbar
-
+export default Navbar;
