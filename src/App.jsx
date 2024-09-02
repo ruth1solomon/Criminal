@@ -6,43 +6,34 @@ import About from "./pages/about";
 import Homepage from "./pages/homepage";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
-import { useState, } from "react";
-
+import { useState, useEffect } from "react";
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Retrieve initial auth state from localStorage
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('isAuthenticated') === 'true';
+  });
 
+  // Sync auth state with localStorage
+  useEffect(() => {
+    localStorage.setItem('isAuthenticated', isAuthenticated);
+  }, [isAuthenticated]);
 
   return (
     <BrowserRouter>
-
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-        <Route path="/register" element={<Registerpage />} />
+        <Route path="/register" element={<Registerpage setIsAuthenticated={setIsAuthenticated} />} />
         <Route
           path="/user"
-          element={isAuthenticated ? <Userpage /> : null}
+          element={isAuthenticated ? <Userpage /> : <Registerpage setIsAuthenticated={setIsAuthenticated} />}
         />
-
       </Routes>
     </BrowserRouter>
   );
 };
-
-// ProtectedRoute Component to handle the authentication check
-/* const ProtectedRoute = ({ isAuthenticated }) => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/user");
-    }
-  }, [isAuthenticated, navigate]);
-
-  return isAuthenticated ? <Userpage /> : null;
-}; */
 
 export default App;

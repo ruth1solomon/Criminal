@@ -1,13 +1,20 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Card from './Card';
 
 // eslint-disable-next-line react/prop-types
-const Navbar = ({ isAuthenticated }) => {
+const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);  // Update authentication status
+    localStorage.removeItem('isAuthenticated');  // Remove auth status from localStorage
+    navigate('/');  // Redirect to the homepage
   };
 
   return (
@@ -50,16 +57,29 @@ const Navbar = ({ isAuthenticated }) => {
           <li>
             <Link className="block lg:inline-block px-2 py-1 text-white no-underline" to="/contact">Contact</Link>
           </li>
-          <li>
-            <Link className="block lg:inline-block px-2 py-1 text-white no-underline" to="/register">Register here</Link>
-          </li>
-          <li>
-            <Link className="block lg:inline-block px-2 py-1 text-white no-underline" to="/login">Login</Link>
-          </li>
-          {isAuthenticated && (
+          {!isAuthenticated && (
             <li>
-              <Link to="/user" className="block lg:inline-block px-2 py-1 text-white no-underline">User Page</Link>
+              <Link className="block lg:inline-block px-2 py-1 text-white no-underline" to="/register">Register here</Link>
             </li>
+          )}
+          {!isAuthenticated ? (
+            <li>
+              <Link className="block lg:inline-block px-2 py-1 text-white no-underline" to="/login">Login</Link>
+            </li>
+          ) : (
+            <>
+              <li>
+                <Link className="block lg:inline-block px-2 py-1 text-white no-underline" to="/user">User Page</Link>
+              </li>
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="block lg:inline-block px-2 py-1 text-white no-underline"
+                >
+                  Logout
+                </button>
+              </li>
+            </>
           )}
         </ul>
       </div>

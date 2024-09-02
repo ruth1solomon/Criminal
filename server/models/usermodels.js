@@ -1,16 +1,14 @@
-/* eslint-disable no-undef */
-// models/userModel.js
+const mongoose = require('mongoose');
 
-const users = [];
+const UserSchema = new mongoose.Schema({
+    firstName: String,
+    lastName: String,
+    username: String,
+    email: { type: String, unique: true },
+    password: String,
+    businessLicense: String, // Field to store the path of the uploaded file
+    otp: String,
+    otpExpiry: Date,
+});
 
-// Function to find a user by email
-const findUserByEmail = (email) => {
-    return users.find(user => user.email === email);
-};
-
-// Function to add a new user
-const addUser = (user) => {
-    users.push(user);
-};
-
-module.exports = { findUserByEmail, addUser };
+module.exports = mongoose.model('User', UserSchema);

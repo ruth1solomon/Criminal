@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Homepage = () => {
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar />
+      <Navbar setIsAuthenticated={setIsAuthenticated} />
       <div className="flex flex-col items-center justify-center text-center py-20 px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-extrabold text-gray-800 mb-4">
           Welcome to the Criminal Record System

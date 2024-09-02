@@ -1,52 +1,101 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+// controllers/registerController.js
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/usermodels');
+const sendEmail = require('../utilities/sendmail');
+const upload = require('../utilities/upload');
 
-const generateOTP = require('../utilities/generateOTP');
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'; // Store in environment variable
+// Middleware for handling file uploads
+const uploadSingle = upload.single('businessLicense');
 
 // Handle user registration
-const registerUser = async (req, res) => {
-    try {
-        const { firstName, lastName, username, email, password, confirmPassword, businessLicense } = req.body;
-        const otp = generateOTP();
-        console.log(otp);
-
-        // Check if user already exists
-        let user = await User.findOne({ email });
-        if (user) {
-            return res.status(400).json({ message: 'User already exists' });
+const registerUser = (req, res) => {
+    uploadSingle(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ message: 'File upload error: ' + err });
         }
 
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        try {
+            const { firstName, lastName, username, email, password } = req.body;
 
-        // Create a new user
-        user = new User({
-            firstName,
-            lastName,
-            username,
-            email,
-            password: hashedPassword,
-            confirmPassword,
-            businessLicense
+            // Validate required fields
+            if (!firstName || !lastName || !username || !email || !password) {
+                return res.status(400).json({ message: 'All fields are required' });
+            }
 
+            // Check if user already exists
+            let user = await User.findOne({ email });
+            if (user) {
+                return res.status(400).json({ message: 'User already exists' });
+            }
 
-        });
+            // Hash the password
+            const hashedPassword = await bcrypt.hash(password, 10);
 
-        await user.save();
+            // Send OTP to user's email
+            const emailResult = await sendEmail(email);
+            if (!emailResult.success) {
+                return res.status(500).json({ message: 'Error sending OTP email' });
+            }
 
-        // Generate JWT token
-        const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
+            const otp = emailResult.otp;
+            const otpExpiry = Date.now() + 15 * 60 * 1000; // OTP valid for 15 minutes
 
-        res.status(201).json({ message: 'User registered successfully', token });
+            // Create a new user with OTP and OTP expiry
+            user = new User({
+                firstName,
+                lastName,
+                username,
+                email,
+                password: hashedPassword,
+                businessLicense: req.file ? req.file.path : null, // Store file path if uploaded
+                otp,
+                otpExpiry,
+            });
+
+            await user.save();
+
+            res.status(200).json({ message: 'OTP sent to email' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Server error' });
+        }
+    });
+};
+
+// Handle OTP verification
+const verifyOtp = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+
+        // Find the user by email
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Check if OTP is correct and has not expired
+        if (user.otp === otp && user.otpExpiry > Date.now()) {
+            // Generate JWT token
+            const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
+
+            // Clear OTP and OTP expiry fields
+            user.otp = null;
+            user.otpExpiry = null;
+            await user.save();
+
+            res.status(200).json({ message: 'OTP verified', token });
+        } else {
+            res.status(400).json({ message: 'Invalid OTP or OTP expired' });
+        }
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Server error' });
     }
 };
 
-module.exports = { registerUser };
+module.exports = { registerUser, verifyOtp };

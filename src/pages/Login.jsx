@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/header/Navbar';
 
-const LoginPage = () => {
+const LoginPage = ({ setIsAuthenticated }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -20,10 +20,12 @@ const LoginPage = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('https://localhost:5000/api/auth/login', formData);
+            // Update the URL to use http for local development
+            const response = await axios.post('http://localhost:5000/api/auth/login', formData);
 
             if (response.status === 200) {
                 console.log('Login successful');
+                setIsAuthenticated(true); // Update authentication status
                 navigate('/user'); // Redirect to the user page upon successful login
             }
         } catch (error) {
@@ -34,7 +36,7 @@ const LoginPage = () => {
 
     return (
         <>
-            <Navbar />
+            <Navbar setIsAuthenticated={setIsAuthenticated} />
             <div className="flex justify-center items-center min-h-screen bg-gray-100">
                 <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
                     <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">Login</h2>

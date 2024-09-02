@@ -4,8 +4,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Modal from 'react-modal';
 
-const RegisterPage = () => {
-  const [setIsAuthenticated] = useState(false);
+
+Modal.setAppElement('#root');
+
+const RegisterPage = ({ setIsAuthenticated }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -30,7 +32,7 @@ const RegisterPage = () => {
     const { name, value, files } = e.target;
     setFormData({
       ...formData,
-      [name]: files ? files[0] : value,
+      [name]: files ? files[0] : value, // Handle file input
     });
   };
 
@@ -52,27 +54,28 @@ const RegisterPage = () => {
   };
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
     if (validatePasswords()) {
       try {
-
         // Prepare form data for server
         const data = new FormData();
-        console.log(`Submitted data:` + formData.email)
         Object.keys(formData).forEach((key) => {
           data.append(key, formData[key]);
         });
 
         // Send registration request to the server
-        const response = await axios.post(`http://localhost:5000/api/auth/register`, data);
+        const response = await axios.post(`http://localhost:5000/api/auth/register`, data, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
 
         // Assuming the server responds with a status indicating OTP sent
         if (response.status === 200) {
           setIsOtpModalOpen(true);
         }
       } catch (error) {
-        console.error('Registration error:', error);
+        console.error('Registration error:', error.response ? error.response.data : error.message);
       }
     }
   };
@@ -84,24 +87,24 @@ const RegisterPage = () => {
     if (value.length === 6) {
       try {
         // Send OTP verification request to the server
-        const response = await axios.post('/api/verify-otp', { email: formData.email, otp: value });
+        const response = await axios.post('http://localhost:5000/api/auth/verify-otp', { email: formData.email, otp: value });
 
         if (response.status === 200) {
-          setIsAuthenticated(true);
           setIsOtpModalOpen(false);
-          navigate('/user');
+          setIsAuthenticated(true);  // Update authentication state
+          navigate('/user'); // Redirect to user page
         } else {
           console.error('OTP verification failed');
         }
       } catch (error) {
-        console.error('OTP verification error:', error);
+        console.error('OTP verification error:', error.response ? error.response.data : error.message);
       }
     }
   };
 
   return (
     <>
-      <Navbar />
+      <Navbar setIsAuthenticated={setIsAuthenticated} />
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
           <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>

@@ -1,8 +1,7 @@
-/* eslint-disable no-undef */
-// eslint-disable-next-line no-undef
+
 const express = require('express');
 const router = express.Router();
-const { registerUser } = require('../controller/register'); // Adjust path as needed
+const { registerUser, verifyOtp } = require('../controller/register'); // Adjust path as needed
 const { loginUser } = require('../controller/login'); // Adjust path as needed
 
 // Register route
@@ -10,5 +9,8 @@ router.post('/register', registerUser);
 
 // Login route
 router.post('/login', loginUser);
+
+// Verify OTP
+router.post('/verify-otp', verifyOtp);
 
 module.exports = router;

@@ -10,7 +10,7 @@ const UserPage = () => {
 
   return (
     <>
-      <Navbar />
+      <Navbar setIsAuthenticated={setIsAuthenticated} />
       <div className="flex min-h-screen bg-gray-100">
         {/* Left Side Menu */}
         <aside className="w-64 bg-gray-800 text-white">

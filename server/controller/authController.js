@@ -1,4 +1,4 @@
-const User = require('../models/usermodels');
+const User = require('../models/userModel'); // Adjust path to your user model
 
 // Controller to get user details
 const getUserDetails = async (req, res) => {
@@ -20,8 +20,8 @@ const getUserDetails = async (req, res) => {
 // Controller to update user profile
 const updateUserProfile = async (req, res) => {
     try {
-        const userId = req.user.id; // Assuming you have user ID from middleware
-        const { name, email } = req.body; // Example fields
+        const userId = req.user.id;
+        const { name, email } = req.body;
 
         const user = await User.findById(userId);
         if (!user) {
