@@ -1,7 +1,9 @@
 import Navbar from "../components/header/Navbar";
 import { Link } from "react-router-dom";
+import { useAuth } from '../context/Authcontext';
 
 const Homepage = () => {
+  const { setIsAuthenticated } = useAuth();
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar setIsAuthenticated={setIsAuthenticated} />

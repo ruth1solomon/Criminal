@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Registerpage from "./pages/Registerpage";
 import Userpage from "./pages/Userpage";
 import About from "./pages/about";
-import Homepage from "./pages/homepage";
+import Homepage from "./pages/Homepage";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import { useState, useEffect } from "react";
