@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Card from './Card';
-import { useAuth } from '../../context/Authcontext';
+//import { useAuth } from '../../context/Authcontext';
 
 // eslint-disable-next-line react/prop-types
 const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {

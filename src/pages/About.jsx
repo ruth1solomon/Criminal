@@ -4,7 +4,7 @@ import { FaFacebookF, FaTwitter, FaLinkedinIn, FaEnvelope } from 'react-icons/fa
 const About = () => {
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <Navbar />
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
         <h1 className="text-4xl font-extrabold text-gray-800 mb-8">About Us</h1>
         <p className="text-lg text-gray-600 mb-6">

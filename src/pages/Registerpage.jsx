@@ -104,7 +104,7 @@ const RegisterPage = ({ setIsAuthenticated }) => {
 
   return (
     <>
-      <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <Navbar />
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
           <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>

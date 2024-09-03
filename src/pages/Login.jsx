@@ -36,7 +36,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
 
     return (
         <>
-            <Navbar setIsAuthenticated={setIsAuthenticated} />
+            <Navbar />
             <div className="flex justify-center items-center min-h-screen bg-gray-100">
                 <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
                     <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">Login</h2>

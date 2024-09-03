@@ -1,12 +1,12 @@
 import Navbar from "../components/header/Navbar";
 import { Link } from "react-router-dom";
-import { useAuth } from '../context/Authcontext';
+//import { useAuth } from '../context/Authcontext';
 
 const Homepage = () => {
-  const { setIsAuthenticated } = useAuth();
+  // const { setIsAuthenticated } = useAuth();
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <Navbar />
       <div className="flex flex-col items-center justify-center text-center py-20 px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-extrabold text-gray-800 mb-4">
           Welcome to the Criminal Record System

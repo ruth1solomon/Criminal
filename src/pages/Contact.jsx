@@ -3,7 +3,7 @@ import Navbar from "../components/header/Navbar";
 const Contact = () => {
   return (
     <>
-      <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <Navbar />
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-lg overflow-hidden w-full max-w-4xl">
 

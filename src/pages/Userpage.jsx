@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Navbar from '../components/header/Navbar';
+import CriminalRecordsDashboard from './CriminalRecordsDashboard';
 
 const UserPage = () => {
   const [activePage, setActivePage] = useState('Dashboard');
@@ -10,7 +11,7 @@ const UserPage = () => {
 
   return (
     <>
-      <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <Navbar />
       <div className="flex min-h-screen bg-gray-100">
         {/* Left Side Menu */}
         <aside className="w-64 bg-gray-800 text-white">
@@ -65,7 +66,7 @@ const UserPage = () => {
         <main className="flex-grow p-6 bg-white">
           <h1 className="text-2xl font-bold mb-4">{activePage}</h1>
           <div>
-            {activePage === 'Dashboard' && <p>Welcome to your dashboard!</p>}
+            {activePage === 'Dashboard' && <CriminalRecordsDashboard />}
             {activePage === 'Profile' && <p>This is your profile page.</p>}
             {activePage === 'Settings' && <p>Manage your settings here.</p>}
             {activePage === 'Account' && <p>Manage your account settings.</p>}
